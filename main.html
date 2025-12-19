@@ -24,7 +24,7 @@
         /* --- Навігація --- */
         header {
             background: var(--white);
-            padding: 1rem 5%;
+            padding: 0.8rem 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -35,11 +35,28 @@
         }
 
         .header-left { display: flex; align-items: center; gap: 20px; }
-        .logo { font-size: 1.5rem; font-weight: bold; color: var(--primary-color); cursor: pointer; }
-        .search-bar input { padding: 8px 15px; border-radius: 20px; border: 1px solid var(--accent-color); width: 180px; }
+        
+        /* Стилізація Логотипу */
+        .logo { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-size: 1.6rem; 
+            font-weight: bold; 
+            color: var(--primary-color); 
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .logo:hover { transform: scale(1.02); }
+        .logo svg { width: 40px; height: 40px; fill: var(--primary-color); }
+
+        .search-bar input { padding: 8px 15px; border-radius: 20px; border: 1px solid var(--accent-color); width: 180px; outline: none; }
+        .search-bar input:focus { border-color: var(--primary-color); }
 
         nav a { margin-left: 15px; text-decoration: none; color: var(--text-color); font-weight: 500; cursor: pointer; }
-        .lang-switch { background: none; border: 1px solid var(--primary-color); cursor: pointer; padding: 5px 10px; border-radius: 5px; }
+        nav a:hover { color: var(--primary-color); }
+        .lang-switch { background: none; border: 1px solid var(--primary-color); cursor: pointer; padding: 5px 10px; border-radius: 5px; color: var(--primary-color); }
+        .lang-switch:hover { background: var(--primary-color); color: white; }
 
         /* --- Секції --- */
         .page { display: none; padding: 2rem 5%; animation: fadeIn 0.4s; min-height: 70vh; }
@@ -57,12 +74,12 @@
         .product-detail-container img { width: 100%; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .product-desc { margin: 20px 0; color: #666; font-size: 1.1rem; }
 
-        /* --- Модальні вікна (Замовлення) --- */
+        /* --- Модальні вікна --- */
         .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
         .modal-content { background: white; margin: 8% auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 450px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
         .modal-content input, .modal-content select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
 
-        /* --- Чат в реальному часі --- */
+        /* --- Чат --- */
         .chat-container { display: none; position: fixed; bottom: 90px; right: 20px; width: 300px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 2500; flex-direction: column; overflow: hidden; border: 1px solid #eee; }
         .chat-header { background: var(--primary-color); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; }
         .chat-messages { height: 250px; padding: 15px; overflow-y: auto; background: #fdfdfd; font-size: 0.9rem; }
@@ -78,7 +95,15 @@
 
 <header>
     <div class="header-left">
-        <div class="logo" onclick="showPage('home')">KnitCo.UA</div>
+        <div class="logo" onclick="showPage('home')">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 2" />
+                <path d="M30 40 Q 50 10 70 40 Q 90 70 50 90 Q 10 70 30 40" fill="currentColor" opacity="0.8"/>
+                <line x1="35" y1="20" x2="65" y2="80" stroke="currentColor" stroke-width="3" />
+                <line x1="65" y1="20" x2="35" y2="80" stroke="currentColor" stroke-width="3" />
+            </svg>
+            <span>KnitCo.UA</span>
+        </div>
         <div class="search-bar"><input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Пошук..."></div>
     </div>
     <nav>
@@ -177,7 +202,7 @@
         },
         { 
             id: 3, name: "Шапка Зима", name_en: "Winter Hat", price: "950 грн", 
-            img: "https://images.shafastatic.net/789929085", 
+            img: "https://images.unsplash.com/photo-1520903074185-8ec362b39c6c?w=600", 
             desc: "Подвійна шапка з відворотом. Захистить навіть у найлютіші морози. 100% органічна вовна.",
             desc_en: "Double-layered hat with a cuff. Protects even in the harshest frosts. 100% organic wool."
         },
@@ -189,7 +214,7 @@
         },
         { 
             id: 5, name: "Плед М'ята", name_en: "Mint Blanket", price: "1200 грн", 
-            img: "https://content.rozetka.com.ua/goods/images/big/273486317.jpg", 
+            img: "https://images.unsplash.com/photo-1584945607525-24762967f4dc?w=600", 
             desc: "Великий затишний плед розміром 150х200 см. Додасть особливого шарму вашій вітальні або спальні.",
             desc_en: "Large cozy blanket size 150x200 cm. Adds special charm to your living room or bedroom."
         }
@@ -240,7 +265,6 @@
         showPage('product-details');
     }
 
-    // Пошук
     function handleSearch() {
         const val = document.getElementById('searchInput').value.toLowerCase();
         const filtered = products.filter(p => p.name.toLowerCase().includes(val) || p.name_en.toLowerCase().includes(val));
@@ -248,7 +272,6 @@
         showPage('catalog');
     }
 
-    // Модальне вікно замовлення
     function openOrderModal(name) {
         document.getElementById('orderItemName').innerText = name;
         document.getElementById('orderModal').style.display = 'block';
@@ -264,7 +287,6 @@
         closeOrderModal();
     }
 
-    // Чат
     function toggleChat() {
         const win = document.getElementById('chatWindow');
         win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
@@ -282,7 +304,6 @@
         }, 1000);
     }
 
-    // Закриття модалки при кліку навколо
     window.onclick = (e) => { if(e.target == document.getElementById('orderModal')) closeOrderModal(); }
 
     renderCatalog();
