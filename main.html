@@ -10,6 +10,7 @@
             --accent-color: #c8b6a6;
             --bg-color: #f8f5f1;
             --text-color: #443c33;
+            --white: #ffffff;
         }
 
         body {
@@ -20,9 +21,9 @@
             line-height: 1.6;
         }
 
-        /* Навігація */
+        /* --- Навігація та Пошук --- */
         header {
-            background: #fff;
+            background: var(--white);
             padding: 1rem 5%;
             display: flex;
             justify-content: space-between;
@@ -31,28 +32,25 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            flex-wrap: wrap;
         }
 
+        .header-left { display: flex; align-items: center; gap: 20px; }
         .logo { font-size: 1.5rem; font-weight: bold; color: var(--primary-color); cursor: pointer; }
+        
+        .search-bar { position: relative; }
+        .search-bar input { padding: 8px 15px; border-radius: 20px; border: 1px solid var(--accent-color); width: 200px; }
 
-        nav a {
-            margin-left: 20px;
-            text-decoration: none;
-            color: var(--text-color);
-            font-weight: 500;
-            cursor: pointer;
-        }
+        nav a { margin-left: 20px; text-decoration: none; color: var(--text-color); font-weight: 500; cursor: pointer; }
+        .lang-switch { background: none; border: 1px solid var(--primary-color); cursor: pointer; padding: 2px 8px; border-radius: 4px; margin-left: 10px; }
 
-        /* Секції */
-        .page { display: none; padding: 2rem 5%; animation: fadeIn 0.5s; }
+        /* --- Секції --- */
+        .page { display: none; padding: 2rem 5%; animation: fadeIn 0.5s; min-height: 80vh; }
         .active { display: block; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Головна */
-        .hero { text-align: center; padding: 100px 20px; background: var(--accent-color); color: white; border-radius: 15px; }
-
-        /* Каталог */
+        /* --- Каталог --- */
         .catalog-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -61,7 +59,7 @@
         }
 
         .product-card {
-            background: white;
+            background: var(--white);
             padding: 15px;
             border-radius: 10px;
             text-align: center;
@@ -73,120 +71,255 @@
         .product-card:hover { transform: translateY(-5px); }
         .product-card img { width: 100%; border-radius: 8px; height: 250px; object-fit: cover; }
 
-        /* Деталі товару */
-        .product-detail-container { display: flex; gap: 40px; background: white; padding: 30px; border-radius: 15px; }
-        .product-detail-container img { width: 400px; border-radius: 10px; }
+        /* --- Віджети та Модальні вікна --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
 
-        /* Форма контактів */
-        .contact-form { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
-        input, textarea, button { padding: 12px; border: 1px solid #ccc; border-radius: 5px; }
-        button { background: var(--primary-color); color: white; border: none; cursor: pointer; font-size: 1rem; }
-        button:hover { background: #6f5f50; }
+        .modal-content {
+            background-color: var(--white);
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
 
-        footer { text-align: center; padding: 2rem; margin-top: 40px; font-size: 0.9rem; color: #777; }
+        /* Чат-флоат */
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 999;
+        }
+
+        .newsletter-box {
+            background: var(--accent-color);
+            padding: 40px;
+            text-align: center;
+            margin-top: 50px;
+            border-radius: 15px;
+            color: white;
+        }
+
+        /* Деталі */
+        .product-detail-container { display: flex; gap: 40px; background: white; padding: 30px; border-radius: 15px; flex-wrap: wrap; }
+        .product-detail-container img { width: 100%; max-width: 400px; border-radius: 10px; }
+
+        footer { text-align: center; padding: 2rem; background: #eee; margin-top: 40px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo" onclick="showPage('home')">KnitCo.UA</div>
+    <div class="header-left">
+        <div class="logo" onclick="showPage('home')">KnitCo.UA</div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Пошук...">
+        </div>
+    </div>
     <nav>
-        <a onclick="showPage('home')">Головна</a>
-        <a onclick="showPage('catalog')">Каталог</a>
-        <a onclick="showPage('contacts')">Контакти</a>
+        <a onclick="showPage('home')" data-t="nav_home">Головна</a>
+        <a onclick="showPage('catalog')" data-t="nav_catalog">Каталог</a>
+        <a onclick="showPage('contacts')" data-t="nav_contacts">Контакти</a>
+        <button class="lang-switch" onclick="toggleLang()">EN</button>
     </nav>
 </header>
 
 <section id="home" class="page active">
-    <div class="hero">
-        <h1>Твоя затишна історія починається тут</h1>
-        <p>В'язаний одяг з натуральної вовни, створений з любов'ю.</p>
-        <button onclick="showPage('catalog')" style="background: white; color: var(--primary-color); padding: 10px 25px; margin-top: 20px; font-weight: bold;">Перейти до покупок</button>
+    <div style="text-align: center; padding: 80px 20px; background: var(--accent-color); color: white; border-radius: 15px;">
+        <h1 data-t="hero_title">Твоя затишна історія починається тут</h1>
+        <p data-t="hero_sub">В'язаний одяг з натуральної вовни, створений з любов'ю.</p>
+        <button onclick="showPage('catalog')" style="background: white; color: var(--primary-color); padding: 12px 30px; border:none; border-radius:5px; cursor:pointer;" data-t="btn_shop">До каталогу</button>
+    </div>
+
+    <div class="newsletter-box">
+        <h3 data-t="news_title">Підпишіться на знижки</h3>
+        <p data-t="news_sub">Отримуйте новини про нові колекції першими</p>
+        <input type="email" id="newsEmail" placeholder="Email" style="padding: 10px; width: 250px; border-radius: 5px; border: none;">
+        <button onclick="subscribe()" style="padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer;" data-t="btn_sub">Підписатись</button>
     </div>
 </section>
 
 <section id="catalog" class="page">
-    <h2>Наш асортимент</h2>
-    <div class="catalog-grid" id="catalog-list">
-        </div>
+    <h2 data-t="catalog_title">Наш асортимент</h2>
+    <div class="catalog-grid" id="catalog-list"></div>
 </section>
 
 <section id="product-details" class="page">
-    <button onclick="showPage('catalog')">← Назад до каталогу</button>
-    <div id="product-content" class="product-detail-container">
-        </div>
+    <button onclick="showPage('catalog')" style="margin-bottom: 20px; cursor:pointer;">← <span data-t="back">Назад</span></button>
+    <div id="product-content" class="product-detail-container"></div>
 </section>
 
 <section id="contacts" class="page">
-    <div style="text-align: center; margin-bottom: 30px;">
-        <h2>Зв'яжіться з нами</h2>
-        <p>Ми з радістю відповімо на ваші запитання або приймемо індивідуальне замовлення.</p>
+    <h2 data-t="nav_contacts" style="text-align:center">Контакти</h2>
+    <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+        <p>Telegram: @KnitCo_UA</p>
+        <p>WhatsApp: +380 99 000 00 00</p>
+        <hr>
+        <form onsubmit="event.preventDefault(); alert('OK');" style="display:flex; flex-direction:column; gap:10px;">
+            <input type="text" placeholder="Ім'я">
+            <textarea placeholder="Повідомлення"></textarea>
+            <button type="submit" style="background:var(--primary-color); color:white; border:none; padding:10px;">Надіслати</button>
+        </form>
     </div>
-    <form class="contact-form" onsubmit="event.preventDefault(); alert('Дякуємо! Ми зателефонуємо вам найближчим часом.');">
-        <input type="text" placeholder="Ваше ім'я" required>
-        <input type="tel" placeholder="Номер телефону" required>
-        <textarea rows="5" placeholder="Ваше повідомлення або назва товару"></textarea>
-        <button type="submit">Замовити дзвінок</button>
-    </form>
 </section>
 
+<div id="orderModal" class="modal">
+    <div class="modal-content">
+        <h2 data-t="order_title">Оформлення замовлення</h2>
+        <p id="orderItemName" style="font-weight: bold; color: var(--primary-color);"></p>
+        <form id="orderForm" onsubmit="confirmOrder(event)">
+            <input type="text" id="custName" placeholder="Ваше ім'я" required style="width:100%; margin-bottom:10px;">
+            <input type="tel" id="custPhone" placeholder="Номер телефону" required style="width:100%; margin-bottom:10px;">
+            <select id="delivery" style="width:100%; padding:10px; margin-bottom:20px;">
+                <option value="np">Нова Пошта</option>
+                <option value="up">Укрпошта</option>
+            </select>
+            <button type="submit" style="width:100%; padding:15px; background: green; color:white; border:none; border-radius:5px;" data-t="btn_confirm">Підтвердити замовлення</button>
+            <button type="button" onclick="closeModal()" style="width:100%; margin-top:10px; background:none; border:none; color:gray; cursor:pointer;" data-t="btn_cancel">Скасувати</button>
+        </form>
+    </div>
+</div>
+
+<div class="chat-widget" onclick="toggleMessenger()">💬</div>
+
 <footer>
-    <p>&copy; 2023 KnitCo. Усі права захищені.</p>
+    <p>&copy; 2025 KnitCo. <span data-t="footer_text">Всі права захищені</span>.</p>
 </footer>
 
 <script>
-    // База даних товарів
+    // 1. Мовна база
+    const i18n = {
+        uk: {
+            nav_home: "Головна", nav_catalog: "Каталог", nav_contacts: "Контакти",
+            hero_title: "Твоя затишна історія починається тут",
+            hero_sub: "В'язаний одяг з натуральної вовни.",
+            btn_shop: "До каталогу", catalog_title: "Наш асортимент",
+            news_title: "Підпишіться на знижки", news_sub: "Отримуйте новини першими",
+            btn_sub: "Підписатись", back: "Назад", order_title: "Оформлення замовлення",
+            btn_confirm: "Підтвердити", btn_cancel: "Скасувати", footer_text: "Усі права захищені"
+        },
+        en: {
+            nav_home: "Home", nav_catalog: "Catalog", nav_contacts: "Contacts",
+            hero_title: "Your Cozy Story Starts Here",
+            hero_sub: "Handmade knitwear from natural wool.",
+            btn_shop: "Go to Shop", catalog_title: "Our Collection",
+            news_title: "Subscribe for Discounts", news_sub: "Get news about new collections first",
+            btn_sub: "Subscribe", back: "Back", order_title: "Checkout",
+            btn_confirm: "Confirm Order", btn_cancel: "Cancel", footer_text: "All rights reserved"
+        }
+    };
+
+    let currentLang = 'uk';
+
+    // 2. База товарів
     const products = [
-        { id: 1, name: "Оверсайз светр 'Хмара'", price: "1850 грн", img: "https://images.unsplash.com/photo-1574201635302-388dd92a4c3f?auto=format&fit=crop&w=400&q=80", desc: "М'який светр ручної в'язки з альпаки. Ідеально підходить для холодних вечорів." },
-        { id: 2, name: "Кардиган 'Горіх'", price: "2200 грн", img: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=400&q=80", desc: "Довгий кардиган з великими ґудзиками та зручними кишенями." },
-        { id: 3, name: "В'язана шапка та шарф", price: "950 грн", img: "https://images.unsplash.com/photo-1520903074185-8ec362b39c6c?auto=format&fit=crop&w=400&q=80", desc: "Комплект з мериносової вовни, який не кусається." },
-        { id: 4, name: "Жилет 'Модерн'", price: "1400 грн", img: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=400&q=80", desc: "Стильний жилет для створення багатошарових образів." },
-        { id: 5, name: "Дитячий плед 'М'ята'", price: "1200 грн", img: "https://images.unsplash.com/photo-1584945607525-24762967f4dc?auto=format&fit=crop&w=400&q=80", desc: "Гіпоалергенний плед для найменших, розмір 100х100 см." }
+        { id: 1, name: "Оверсайз светр 'Хмара'", name_en: "Oversize Sweater 'Cloud'", price: "1850 грн", img: "https://images.unsplash.com/photo-1574201635302-388dd92a4c3f?w=400", tags: "светр, wool, cloud" },
+        { id: 2, name: "Кардиган 'Горіх'", name_en: "Cardigan 'Nut'", price: "2200 грн", img: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400", tags: "кардиган, brown, горіх" },
+        { id: 3, name: "Шапка 'Зима'", name_en: "Winter Hat", price: "950 грн", img: "https://images.unsplash.com/photo-1520903074185-8ec362b39c6c?w=400", tags: "шапка, hat, зима" },
+        { id: 4, name: "Жилет 'Модерн'", name_en: "Modern Vest", price: "1400 грн", img: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400", tags: "жилет, vest" },
+        { id: 5, name: "Плед 'М'ята'", name_en: "Mint Blanket", price: "1200 грн", img: "https://images.unsplash.com/photo-1584945607525-24762967f4dc?w=400", tags: "плед, дитяче" }
     ];
 
-    // Функція перемикання сторінок
+    // 3. Функції інтерфейсу
     function showPage(pageId) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
-        window.scrollTo(0,0);
     }
 
-    // Рендеринг каталогу
-    function renderCatalog() {
-        const catalogList = document.getElementById('catalog-list');
-        catalogList.innerHTML = products.map(p => `
+    function toggleLang() {
+        currentLang = currentLang === 'uk' ? 'en' : 'uk';
+        document.querySelector('.lang-switch').innerText = currentLang === 'uk' ? 'EN' : 'UA';
+        updateTranslations();
+        renderCatalog(products);
+    }
+
+    function updateTranslations() {
+        document.querySelectorAll('[data-t]').forEach(el => {
+            const key = el.getAttribute('data-t');
+            el.innerText = i18n[currentLang][key];
+        });
+    }
+
+    // 4. Пошук
+    function handleSearch() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = products.filter(p => 
+            p.name.toLowerCase().includes(query) || 
+            p.name_en.toLowerCase().includes(query) ||
+            p.tags.toLowerCase().includes(query)
+        );
+        renderCatalog(filtered);
+        if(query !== "") showPage('catalog');
+    }
+
+    // 5. Рендеринг
+    function renderCatalog(items) {
+        const list = document.getElementById('catalog-list');
+        list.innerHTML = items.map(p => `
             <div class="product-card" onclick="openProduct(${p.id})">
-                <img src="${p.img}" alt="${p.name}">
-                <h3>${p.name}</h3>
+                <img src="${p.img}">
+                <h3>${currentLang === 'uk' ? p.name : p.name_en}</h3>
                 <p><strong>${p.price}</strong></p>
             </div>
         `).join('');
     }
 
-    // Відкриття деталей товару
     function openProduct(id) {
-        const product = products.find(p => p.id === id);
+        const p = products.find(prod => prod.id === id);
         const content = document.getElementById('product-content');
-        
         content.innerHTML = `
-            <img src="${product.img}" alt="${product.name}">
+            <img src="${p.img}">
             <div>
-                <h1>${product.name}</h1>
-                <p style="font-size: 1.5rem; color: var(--primary-color);"><strong>${product.price}</strong></p>
-                <p>${product.desc}</p>
-                <ul style="margin-bottom: 25px;">
-                    <li>Матеріал: 80% Вовна, 20% Акрил</li>
-                    <li>Термін виготовлення: 3-5 днів</li>
-                    <li>Доставка: Нова Пошта / Укрпошта</li>
-                </ul>
-                <button onclick="showPage('contacts')">Замовити цей товар</button>
+                <h1>${currentLang === 'uk' ? p.name : p.name_en}</h1>
+                <p style="font-size: 1.5rem; color: var(--primary-color);">${p.price}</p>
+                <button onclick="openOrderModal('${p.name}')" style="background:var(--primary-color); color:white; padding:15px 30px; border:none; cursor:pointer; border-radius:5px;">Замовити зараз</button>
             </div>
         `;
         showPage('product-details');
     }
 
-    // Ініціалізація
-    renderCatalog();
+    // 6. Модальне вікно та замовлення
+    function openOrderModal(itemName) {
+        document.getElementById('orderItemName').innerText = itemName;
+        document.getElementById('orderModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('orderModal').style.display = 'none';
+    }
+
+    function confirmOrder(e) {
+        e.preventDefault();
+        alert(currentLang === 'uk' ? 'Дякуємо! Менеджер зв’яжеться з вами.' : 'Thank you! Manager will contact you.');
+        closeModal();
+    }
+
+    // 7. Додаткові модулі
+    function subscribe() {
+        const email = document.getElementById('newsEmail').value;
+        if(email) alert('Дякуємо за підписку на ' + email);
+    }
+
+    function toggleMessenger() {
+        const msg = currentLang === 'uk' ? "Перейти в Telegram @KnitCo?" : "Open Telegram @KnitCo?";
+        if(confirm(msg)) window.open('https://t.me/your_account', '_blank');
+    }
+
+    // Старт
+    renderCatalog(products);
 </script>
 
 </body>
